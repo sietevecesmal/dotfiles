@@ -1,0 +1,13 @@
+[user]
+	name = Gonzalo López Grassi
+	email = glopezgrassi@gmail.com
+[core]
+	excludesfile = /Users/gonzalo/.gitignore_global
+[push]
+	default = simple
+# [difftool "sourcetree"]
+# 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+# 	path =
+# [mergetool "sourcetree"]
+# 	cmd = /opt/homebrew-cask/Caskroom/sourcetree/2.0.5.5/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+# 	trustExitCode = true
