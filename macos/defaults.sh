@@ -6,10 +6,10 @@ COMPUTER_NAME="Goomba"
 osascript -e 'tell application "System Preferences" to quit'
 
 # Ask for the administrator password upfront
-sudo -v
+# sudo -v
 
 # Keep-alive: update existing `sudo` time stamp until `.macos` has finished
-while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+# while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
 ###############################################################################
 # General UI/UX                                                               #
@@ -74,6 +74,26 @@ defaults write com.apple.menuextra.battery ShowPercent -string "YES"
 # Disable smart quotes and dashes as they’re annoying when typing code
 # defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
 # defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
+
+###############################################################################
+# SSD-specific tweaks                                                         #
+###############################################################################
+
+# Disable local Time Machine snapshots
+# sudo tmutil disablelocal
+
+# Disable hibernation (speeds up entering sleep mode)
+# sudo pmset -a hibernatemode 0
+
+# Remove the sleep image file to save disk space
+# sudo rm /private/var/vm/sleepimage
+# Create a zero-byte file instead…
+# sudo touch /private/var/vm/sleepimage
+# …and make sure it can’t be rewritten
+# sudo chflags uchg /private/var/vm/sleepimage
+
+# Disable the sudden motion sensor as it’s not useful for SSDs
+# sudo pmset -a sms 0
 
 ###############################################################################
 # Trackpad, mouse, keyboard, Bluetooth accessories, and input                 #
@@ -141,7 +161,7 @@ defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int
 # defaults write NSGlobalDomain AppleMetricUnits -bool true
 
 # Set the timezone; see `sudo systemsetup -listtimezones` for other values
-# sudo systemsetup -settimezone "Europe/Amsterdam" > /dev/null
+# sudo systemsetup -settimezone "America/Montevideo" > /dev/null
 
 # Disable auto-correct
 # defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
@@ -169,6 +189,9 @@ defaults write com.apple.screensaver askForPasswordDelay -int 0
 # Enable subpixel font rendering on non-Apple LCDs
 # defaults write NSGlobalDomain AppleFontSmoothing -int 2
 
+# Enable HiDPI display modes (requires restart)
+# sudo defaults write /Library/Preferences/com.apple.windowserver DisplayResolutionEnabled -bool true
+
 ###############################################################################
 # Finder                                                                      #
 ###############################################################################
@@ -177,10 +200,6 @@ defaults write com.apple.screensaver askForPasswordDelay -int 0
 # For other paths, use `PfLo` and `file:///full/path/here/`
 defaults write com.apple.finder NewWindowTarget -string "PfDe"
 defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}/Desktop/"
-
-# Use list view in all Finder windows by default
-# Four-letter codes for the other view modes: `icnv`, `clmv`, `Flwv`
-defaults write com.apple.finder FXPreferredViewStyle -string "clmv"
 
 # Finder: allow quitting via ⌘ + Q; doing so will also hide desktop icons
 # defaults write com.apple.finder QuitMenuItem -bool true
@@ -227,10 +246,9 @@ defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
 # Use AirDrop over every interface.
 # defaults write com.apple.NetworkBrowser BrowseAllInterfaces -bool true
 
-# Always open everything in Finder's list view.
-# Use list view in all Finder windows by default
-# Four-letter codes for the other view modes: `icnv`, `clmv`, `Flwv`
-# defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
+# Use columns view in all Finder windows by default
+# Four-letter codes for the other view modes: `icnv`, `Nlsv`, `Flwv`
+defaults write com.apple.finder FXPreferredViewStyle -string "clmv"
 
 # Disable the warning before emptying the Trash
 # defaults write com.apple.finder WarnOnEmptyTrash -bool false
@@ -255,7 +273,7 @@ defaults write com.apple.dock autohide -bool true
 # Enable magnification
 defaults write com.apple.dock magnification -bool true
 
-# Dock size
+# Icons size
 defaults write com.apple.dock tilesize -int 40
 defaults write com.apple.dock largesize -int 60
 
@@ -432,25 +450,14 @@ defaults write com.apple.dock wvous-br-modifier -int 0
 # sudo mdutil -E / > /dev/null
 
 ###############################################################################
-# Terminal & iTerm                                                                    #
+# Time Machine                                                                #
 ###############################################################################
 
-# Only use UTF-8 in Terminal.app
-# defaults write com.apple.terminal StringEncodings -array 4
+# Prevent Time Machine from prompting to use new hard drives as backup volume
+# defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
 
-# Use "Pro" theme (black background color)
-# defaults write com.apple.terminal "Default Window Settings" -string "Pro"
-# defaults write com.apple.terminal "Startup Window Settings" -string "Pro"
-
-# Disable audible and visual bells
-# defaults write com.apple.terminal "Bell" -bool false
-# defaults write com.apple.terminal "VisualBell" -bool false
-
-# Disable the annoying line marks
-# defaults write com.apple.Terminal ShowLineMarks -int 0
-
-# Don’t display the annoying prompt when quitting iTerm
-defaults write com.googlecode.iterm2 PromptOnQuit -bool false
+# Disable local Time Machine backups
+# hash tmutil &> /dev/null && sudo tmutil disablelocal
 
 ###############################################################################
 # Activity Monitor                                                            #
@@ -460,10 +467,10 @@ defaults write com.googlecode.iterm2 PromptOnQuit -bool false
 # defaults write com.apple.ActivityMonitor OpenMainWindow -bool true
 
 # Visualize CPU usage in the Activity Monitor Dock icon
-# defaults write com.apple.ActivityMonitor IconType -int 5
+defaults write com.apple.ActivityMonitor IconType -int 5
 
 # Show all processes in Activity Monitor
-# defaults write com.apple.ActivityMonitor ShowCategory -int 0
+defaults write com.apple.ActivityMonitor ShowCategory -int 0
 
 # Sort Activity Monitor results by CPU usage
 # defaults write com.apple.ActivityMonitor SortColumn -string "CPUUsage"

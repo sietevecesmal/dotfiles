@@ -7,6 +7,7 @@ sudo easy_install pip
 
 apps=(
   ansible
+  awscli
   boto
   pip-upgrade-outdated
 )

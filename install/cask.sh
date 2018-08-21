@@ -15,6 +15,7 @@ apps=(
   cyberduck
   docker
   dosbox
+  duet
   google-backup-and-sync
   google-chrome
   haroopad
@@ -49,6 +50,7 @@ apps=(
   # sourcetree
   # sublime-text
   # virtualbox
+  # virtualbox-extension-pack
 )
 
 brew cask install "${apps[@]}"

@@ -6,6 +6,13 @@ export DOTFILES_DIR DOTFILES_CACHE DOTFILES_EXTRA_DIR
 DOTFILES_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DOTFILES_CACHE="$DOTFILES_DIR/.cache.sh"
 
+# Ask for the sudo password upfront
+sudo -v
+
+# Keep-alive: update existing `sudo` time stamp until bootstrap has finished
+while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+
+
 # Make utilities available
 
 PATH="$DOTFILES_DIR/bin:$PATH"
@@ -16,18 +23,27 @@ if is-executable git -a -d "$DOTFILES_DIR/.git"; then git --work-tree="$DOTFILES
 
 # Allocate symlinks
 
-ln -sfv "$DOTFILES_DIR/symlink/.alas" ~
+ln -sfv "$DOTFILES_DIR/symlink/.alias" ~
 ln -sfv "$DOTFILES_DIR/symlink/.boto" ~
 ln -sfv "$DOTFILES_DIR/symlink/.gitconfig" ~
 ln -sfv "$DOTFILES_DIR/symlink/.gitignore_global" ~
 
 # Install packages
+echo "Installing packages..."
 
 . "$DOTFILES_DIR/install/brew.sh"
 . "$DOTFILES_DIR/install/cask.sh"
 . "$DOTFILES_DIR/install/pip.sh"
+
+# Run macos settings
+echo "Updating macOS settings..."
+. "$DOTFILES_DIR/macos/defaults.sh"
+. "$DOTFILES_DIR/macos/defaults-apps.sh"
+
+# Run dock settings
+echo "Updating Dock settings..."
+. "$DOTFILES_DIR/macos/dock.sh"
+
+# Configure shell
+echo "Configuring shell..."
 . "$DOTFILES_DIR/install/zsh.sh"
-
-# Run tests
-
-# if is-executable bats; then bats test/*.bats; else echo "Skipped: tests (missing: bats)"; fi
