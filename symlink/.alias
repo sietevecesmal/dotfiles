@@ -2,8 +2,11 @@
 alias mkdir='mkdir -p'
 alias chown='chown -Rv'
 alias chmod='chmod -Rv'
-alias pip='pip2'
 
 # Program aliases
 alias fuck='$(thefuck $(fc -ln -1 | tail -n 1)); fc -R'
-alias pipupgrade=$'sudo -H pip2 install -U \`pip2 list --outdated --format=legacy |awk -F \' \' \'{print $1}\'`'
+
+# Terraform
+alias tfplan='terraform plan -out=.tfplan --var-file="env.tfvars"'
+alias tffreshplan='terraform plan -out=.tfplan'
+alias tfapply='terraform apply .tfplan; rm .tfplan'

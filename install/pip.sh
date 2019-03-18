@@ -9,6 +9,8 @@ apps=(
   ansible
   awscli
   boto
+  boto3
+  docker
   pip-upgrade-outdated
 )
 

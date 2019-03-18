@@ -15,9 +15,10 @@ apps=(
   coreutils
   dockutil
   mackup
+  nvm
   python
   terraform
-  thefuck
+  # thefuck
   vim
   wget
   wifi-password

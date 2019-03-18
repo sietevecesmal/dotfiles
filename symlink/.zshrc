@@ -10,6 +10,7 @@ antigen bundles <<EOBUNDLES
   git
   z
   sublime
+  kubectl
   # Syntax highlighting bundle.
   zsh-users/zsh-syntax-highlighting
 EOBUNDLES
@@ -25,10 +26,12 @@ export LC_ALL=en_US.UTF-8
 
 export PATH="/usr/local/sbin:$PATH"
 
-#Load aliases
-# source $HOME/.aliases
-#eval $(thefuck --alias)
+export NVM_DIR="$HOME/.nvm"
+. "/usr/local/opt/nvm/nvm.sh"
+
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-# export SDKMAN_DIR="/Users/gonzalo/.sdkman"
-# [[ -s "/Users/gonzalo/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/gonzalo/.sdkman/bin/sdkman-init.sh"
+export SDKMAN_DIR="/Users/gonzalo/.sdkman"
+[[ -s "/Users/gonzalo/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/gonzalo/.sdkman/bin/sdkman-init.sh"
+export PATH="/usr/local/opt/mysql@5.6/bin:$PATH"
+export PATH="/usr/local/opt/tomcat@7/bin:$PATH"

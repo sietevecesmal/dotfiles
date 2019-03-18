@@ -6,6 +6,7 @@
 # brew install zsh
 # brew install antigen
 
+ln -sfv ~/.dotfiles/symlink/.zshenv ~/.zshenv
 ln -sfv ~/.dotfiles/symlink/.zshrc ~/.zshrc
 
 # ln -sfv ~/.dotfiles/symlink/.* ~/
