@@ -9,4 +9,4 @@ alias fuck='$(thefuck $(fc -ln -1 | tail -n 1)); fc -R'
 # Terraform
 alias tfplan='terraform plan -out=.tfplan --var-file="env.tfvars"'
 alias tffreshplan='terraform plan -out=.tfplan'
-alias tfapply='terraform apply .tfplan; rm .tfplan'
+alias tfapply='terraform apply .tfplan'
