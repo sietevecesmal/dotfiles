@@ -30,8 +30,10 @@ export NVM_DIR="$HOME/.nvm"
 export PATH="/usr/local/sbin:$PATH"
 export PATH="/usr/local/opt/mysql@5.6/bin:$PATH"
 export PATH="/usr/local/opt/tomcat@7/bin:$PATH"
-export PATH="/usr/local/opt/ruby/bin:$PATH"
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+# rbenv init
+eval "$(rbenv init -)"
+
+# sdkman init
 export SDKMAN_DIR="/Users/gonzalo/.sdkman"
 [[ -s "/Users/gonzalo/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/gonzalo/.sdkman/bin/sdkman-init.sh"
