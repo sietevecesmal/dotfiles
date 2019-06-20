@@ -1,0 +1,11 @@
+"*":
+  core:
+    telemetryConsent: "no"
+    themes: [
+      "atom-material-ui"
+      "atom-material-syntax"
+    ]
+  "exception-reporting":
+    userId: "6f8e3ba8-c455-48fc-9856-a41acd42d6d0"
+  welcome:
+    showOnStartup: false
