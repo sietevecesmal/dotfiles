@@ -4,5 +4,6 @@ dev
 packages
 storage
 .apm
+.atom-socket-secret-*
 .node-gyp
 .npm
