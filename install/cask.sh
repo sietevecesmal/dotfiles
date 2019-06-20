@@ -10,6 +10,7 @@ brew tap caskroom/fonts
 # Install packages
 
 apps=(
+  atom
   calibre
   cheatsheet
   cyberduck
@@ -48,7 +49,6 @@ apps=(
   # opera
   # screenflow
   # sourcetree
-  # sublime-text
   # virtualbox
   # virtualbox-extension-pack
 )
