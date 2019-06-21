@@ -1,6 +1,7 @@
 blob-store
 compile-cache
 dev
+nohup.out
 packages
 storage
 .apm
