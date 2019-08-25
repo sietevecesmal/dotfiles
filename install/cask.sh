@@ -29,7 +29,6 @@ apps=(
   the-unarchiver
   transmission
   tunnelblick
-  vagrant
   visual-studio-code
   vlc
   vnc-viewer
