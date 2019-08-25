@@ -10,8 +10,9 @@ antigen bundles <<EOBUNDLES
   git
   z
   kubectl
-  # Syntax highlighting bundle.
+  # zsh-users bundle.
   zsh-users/zsh-syntax-highlighting
+  zsh-users/zsh-autosuggestions
 EOBUNDLES
 
 # Load the theme.
