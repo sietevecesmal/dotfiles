@@ -14,4 +14,4 @@ apps=(
   pip-upgrade-outdated
 )
 
-pip install "${apps[@]}"
+pip3 install "${apps[@]}"
