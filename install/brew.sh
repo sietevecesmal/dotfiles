@@ -17,7 +17,8 @@ apps=(
   mackup
   nvm
   python
-  terraform
+  rbenv
+  tfenv
   # thefuck
   vim
   wget

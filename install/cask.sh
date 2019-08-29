@@ -13,7 +13,6 @@ apps=(
   atom
   calibre
   cheatsheet
-  cyberduck
   docker
   dosbox
   duet
@@ -29,7 +28,6 @@ apps=(
   the-unarchiver
   transmission
   tunnelblick
-  visual-studio-code
   vlc
   vnc-viewer
   whatsapp

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-COMPUTER_NAME="Goomba"
+COMPUTER_NAME="Kenshin"
 
 # Close any open System Preferences panes, to prevent them from overriding
 # settings we’re about to change
