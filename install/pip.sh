@@ -6,12 +6,14 @@ fi
 sudo easy_install pip
 
 apps=(
+  tornado
+  nose
   ansible
   awscli
   boto
   boto3
-  docker
+  # docker
   pip-upgrade-outdated
 )
 
-pip3 install "${apps[@]}"
+pip3 install --user "${apps[@]}"

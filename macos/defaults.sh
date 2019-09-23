@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-COMPUTER_NAME="Kenshin"
+COMPUTER_NAME="Goomba"
 
 # Close any open System Preferences panes, to prevent them from overriding
 # settings we’re about to change
@@ -34,7 +34,7 @@ sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.serve
 # defaults write com.apple.universalaccess reduceTransparency -bool true
 
 # Menu bar: Show date and 24Hr clock
-defaults write com.apple.menuextra.clock DateFormat -string "EEE MMM d  H:mm a" 
+defaults write com.apple.menuextra.clock DateFormat -string "EEE MMM d  H:mm a"
 
 # Menu bar: show battery percentage
 defaults write com.apple.menuextra.battery ShowPercent -string "YES"

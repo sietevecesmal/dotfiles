@@ -19,6 +19,7 @@ apps=(
   google-backup-and-sync
   google-chrome
   haroopad
+  iterm2
   postico
   sequel-pro
   slack
