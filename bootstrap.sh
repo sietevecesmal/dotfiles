@@ -27,6 +27,7 @@ ln -sfv "$DOTFILES_DIR/symlink/.alias" ~
 ln -sfv "$DOTFILES_DIR/symlink/.boto" ~
 ln -sfv "$DOTFILES_DIR/symlink/.gitconfig" ~
 ln -sfv "$DOTFILES_DIR/symlink/.gitignore_global" ~
+ln -sfv "$DOTFILES_DIR/symlink/.iterm" ~
 
 # Install packages
 echo "Installing packages..."

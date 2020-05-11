@@ -3,9 +3,9 @@ if ! is-macos -o ! is-executable brew; then
   return
 fi
 
-brew tap caskroom/versions
-brew tap caskroom/cask
-brew tap caskroom/fonts
+# brew tap caskroom/versions
+# brew tap caskroom/cask
+# brew tap caskroom/fonts
 
 # Install packages
 
@@ -14,11 +14,10 @@ apps=(
   calibre
   cheatsheet
   docker
-  dosbox
-  duet
   google-backup-and-sync
   google-chrome
   haroopad
+  iterm2
   postico
   sequel-pro
   slack
@@ -27,7 +26,8 @@ apps=(
   spotify
   the-unarchiver
   transmission
-  tunnelblick
+  virtualbox
+  virtualbox-extension-pack
   vlc
   vnc-viewer
   whatsapp
@@ -46,8 +46,7 @@ apps=(
   # opera
   # screenflow
   # sourcetree
-  # virtualbox
-  # virtualbox-extension-pack
+  
 )
 
 brew cask install "${apps[@]}"

@@ -16,7 +16,7 @@ apps=(
   dockutil
   mackup
   nvm
-  python
+  pyenv
   rbenv
   tfenv
   # thefuck
