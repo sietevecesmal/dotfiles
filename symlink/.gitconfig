@@ -12,3 +12,5 @@
 	required = true
 [diff "sopsdiffer"]
 	textconv = sops -d
+[pull]
+	rebase = false
