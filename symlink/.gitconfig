@@ -2,7 +2,7 @@
 	name = Gonzalo López Grassi
 	email = glopezgrassi@gmail.com
 [core]
-	excludesfile = /Users/gonzalo/.gitignore_global
+	excludesfile = $HOME/.gitignore_global
 [push]
 	default = simple
 [filter "lfs"]
@@ -18,3 +18,5 @@
 	insteadOf = https://github.com/
 [url "git://"]
 	insteadOf = https://
+[init]
+	defaultBranch = master

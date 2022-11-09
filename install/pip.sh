@@ -7,7 +7,6 @@ sudo easy_install pip
 
 apps=(
   ansible
-  awscli
   boto
   boto3
   docker

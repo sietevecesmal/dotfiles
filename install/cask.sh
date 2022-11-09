@@ -3,14 +3,8 @@ if ! is-macos -o ! is-executable brew; then
   return
 fi
 
-# brew tap caskroom/versions
-# brew tap caskroom/cask
-# brew tap caskroom/fonts
-
 # Install packages
-
 apps=(
-  atom
   calibre
   cheatsheet
   docker
@@ -19,15 +13,16 @@ apps=(
   haroopad
   iterm2
   postico
+  rectangle
   sequel-pro
   slack
   skype
-  spectacle
   spotify
   the-unarchiver
   transmission
   virtualbox
   virtualbox-extension-pack
+  visual-studio-code
   vlc
   vnc-viewer
   whatsapp
@@ -45,11 +40,10 @@ apps=(
   # macdown
   # opera
   # screenflow
-  # sourcetree
   
 )
 
-brew cask install "${apps[@]}"
+brew install "${apps[@]}"
 
 # Quick Look Plugins (https://github.com/sindresorhus/quick-look-plugins)
 # brew cask install qlcolorcode qlstephen qlmarkdown quicklook-json qlimagesize webpquicklook suspicious-package qlvideo

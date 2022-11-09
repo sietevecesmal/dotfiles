@@ -3,8 +3,8 @@
 #   return
 # fi
 
-# brew install zsh
-# brew install antigen
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+
 
 ln -sfv ~/.dotfiles/symlink/.zshenv ~/.zshenv
 ln -sfv ~/.dotfiles/symlink/.zshrc ~/.zshrc

@@ -2,5 +2,5 @@
 source $HOME/.alias
 
 export DOTFILES_DIR
-DOTFILES_DIR="/home/gonzalo/.dotfiles"
+DOTFILES_DIR="$HOME/.dotfiles"
 PATH="$DOTFILES_DIR/bin:$PATH"

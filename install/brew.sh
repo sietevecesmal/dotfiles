@@ -11,7 +11,7 @@ brew upgrade
 # Install packages
 
 apps=(
-  antigen
+  # antigen
   coreutils
   dockutil
   mackup
@@ -24,6 +24,7 @@ apps=(
   wget
   wifi-password
   zsh
+  zsh-syntax-highlighting
 
   ## REVISAR
   # bash-completion2
