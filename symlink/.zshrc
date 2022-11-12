@@ -1,15 +1,3 @@
-# antigen bundles <<EOBUNDLES
-#   # Guess what to install when running an unknown command.
-#   command-not-found
-#   # Other
-#   git
-#   z
-#   kubectl
-#   # zsh-users bundle.
-#   zsh-users/zsh-syntax-highlighting
-#   zsh-users/zsh-autosuggestions
-# EOBUNDLES
-
 export ZSH="$HOME/.oh-my-zsh"
 
 ZSH_THEME="miloshadzic"
@@ -48,7 +36,3 @@ export NVM_DIR="$HOME/.nvm"
 
 # pyenv init
 eval "$(pyenv init -)"
-
-# sdkman init
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
