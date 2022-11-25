@@ -2,7 +2,6 @@ export ZSH="$HOME/.oh-my-zsh"
 
 ZSH_THEME="miloshadzic"
 
-
 plugins=(
   git
   bundler
@@ -21,18 +20,15 @@ export LC_ALL=en_US.UTF-8
 
 export PATH="/usr/local/sbin:$PATH"
 export PATH="/usr/local/opt/mysql@5.6/bin:$PATH"
-export PATH="/usr/local/opt/tomcat@7/bin:$PATH"
 export PATH="$HOME/.tfenv/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+
+# krew
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 # rbenv init
 export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"
-
-#nvm init
-export NVM_DIR="$HOME/.nvm"
-[ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
-[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 # pyenv init
 eval "$(pyenv init -)"
