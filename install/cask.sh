@@ -12,6 +12,7 @@ apps=(
   google-chrome
   haroopad
   iterm2
+  maccy
   postico
   rectangle
   sequel-pro
