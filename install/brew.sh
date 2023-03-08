@@ -3,46 +3,44 @@ if ! is-macos -o ! is-executable ruby -o ! is-executable curl -o ! is-executable
   return
 fi
 
-ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+if ! command -v brew 1>/dev/null 2>&1; then
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+
 
 brew update
 brew upgrade
 
 # Install packages
-
 apps=(
-  # antigen
   coreutils
-  dockutil
+  hpedrorodrigues/tools/dockutil
+  jq
   mackup
-  nvm
   pyenv
-  rbenv
   tfenv
-  # thefuck
+  thefuck
   vim
   wget
   wifi-password
   zsh
+  zsh-autosuggestions
   zsh-syntax-highlighting
 
-  ## REVISAR
+  ## REVIEW
   # bash-completion2
   # bats
   # diff-so-fancy
   # ffmpeg
   # fasd
   # gifsicle
-  # git
   # git-extras
   # gnu-sed --with-default-names
   # grep --with-default-names
   # hub
   # httpie
   # imagemagick
-  # jq
   # lynx
-  # nano
   # pandoc
   # peco
   # psgrep

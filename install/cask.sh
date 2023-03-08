@@ -4,35 +4,32 @@ if ! is-macos -o ! is-executable brew; then
 fi
 
 # Install packages
-apps=(
+casks=(
+  1password
   calibre
   cheatsheet
-  docker
-  google-backup-and-sync
+  discord
+  expressvpn
+  google-drive
   google-chrome
   haroopad
   iterm2
   maccy
-  postico
   rectangle
-  sequel-pro
-  slack
   skype
   spotify
+  steam
+  telegram
   the-unarchiver
   transmission
-  virtualbox
-  virtualbox-extension-pack
   visual-studio-code
   vlc
   vnc-viewer
   whatsapp
 
-  ## REVISAR
+  ## REVIEW
   # alfred
   # dash2
-  # dropbox
-  # firefox
   # flux
   # font-fira-code
   # glimmerblocker
@@ -44,7 +41,7 @@ apps=(
   
 )
 
-brew install "${apps[@]}"
+brew install "${casks[@]}"
 
 # Quick Look Plugins (https://github.com/sindresorhus/quick-look-plugins)
 # brew cask install qlcolorcode qlstephen qlmarkdown quicklook-json qlimagesize webpquicklook suspicious-package qlvideo
