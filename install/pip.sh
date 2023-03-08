@@ -3,13 +3,12 @@ if ! is-executable python; then
   return
 fi
 
-sudo easy_install pip
+# sudo easy_install pip
 
 apps=(
   ansible
   boto
   boto3
-  docker
   pip-upgrade-outdated
 )
 
