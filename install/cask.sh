@@ -6,6 +6,7 @@ fi
 # Install packages
 casks=(
   1password
+  ankerwork
   calibre
   cheatsheet
   discord

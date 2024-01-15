@@ -8,14 +8,17 @@ work=(
   aws-iam-authenticator
   colima
   docker
+  istioctl
   kubectx
   lens
   pluto
   postico
   sequel-pro
   slack
-  warrensbox/tap/tgswitch
+  arttor/tap/helmify
   derailed/k9s/k9s
+  knative/client/kn
+  warrensbox/tap/tgswitch
 )
 
 brew install "${work[@]}"
