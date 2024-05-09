@@ -7,39 +7,22 @@ fi
 casks=(
   1password
   ankerwork
+  arc
   calibre
   cheatsheet
   discord
   expressvpn
-  google-drive
-  google-chrome
   haroopad
-  iterm2
   maccy
   rectangle
   skype
-  spotify
   steam
   telegram
   the-unarchiver
-  transmission
   visual-studio-code
   vlc
   vnc-viewer
   whatsapp
-
-  ## REVIEW
-  # alfred
-  # dash2
-  # flux
-  # font-fira-code
-  # glimmerblocker
-  # hammerspoon
-  # kaleidoscope
-  # macdown
-  # opera
-  # screenflow
-  
 )
 
 brew install "${casks[@]}"

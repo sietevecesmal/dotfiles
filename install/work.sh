@@ -7,17 +7,17 @@ fi
 work=(
   aws-iam-authenticator
   colima
-  docker
   istioctl
   kubectx
   lens
   pluto
   postico
+  pyenv
   sequel-pro
   slack
+  tfenv
   arttor/tap/helmify
   derailed/k9s/k9s
-  knative/client/kn
   warrensbox/tap/tgswitch
 )
 

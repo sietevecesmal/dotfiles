@@ -14,11 +14,9 @@ brew upgrade
 # Install packages
 apps=(
   coreutils
-  hpedrorodrigues/tools/dockutil
+  dockutil
   jq
   mackup
-  pyenv
-  tfenv
   thefuck
   vim
   wget
@@ -26,28 +24,6 @@ apps=(
   zsh
   zsh-autosuggestions
   zsh-syntax-highlighting
-
-  ## REVIEW
-  # bash-completion2
-  # bats
-  # diff-so-fancy
-  # ffmpeg
-  # fasd
-  # gifsicle
-  # git-extras
-  # gnu-sed --with-default-names
-  # grep --with-default-names
-  # hub
-  # httpie
-  # imagemagick
-  # lynx
-  # pandoc
-  # peco
-  # psgrep
-  # shellcheck
-  # ssh-copy-id
-  # tree
-  # unar
 )
 
 brew install "${apps[@]}"
