@@ -3,27 +3,31 @@ if ! is-macos -o ! is-executable brew; then
   return
 fi
 
-# Install packages
+# Base packages (always installed)
 casks=(
   1password
-  ankerwork
   arc
-  calibre
-  cheatsheet
-  discord
-  expressvpn
-  haroopad
   maccy
   rectangle
-  skype
-  steam
-  telegram
   the-unarchiver
   visual-studio-code
   vlc
-  vnc-viewer
+  warp
   whatsapp
 )
+
+# Personal packages (skipped in work mode)
+if [ "$DOTFILES_MODE" != "work" ]; then
+  casks+=(
+    ankerwork
+    calibre
+    discord
+    expressvpn
+    steam
+    telegram
+    vnc-viewer
+  )
+fi
 
 brew install "${casks[@]}"
 

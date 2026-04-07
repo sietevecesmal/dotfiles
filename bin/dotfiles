@@ -21,7 +21,7 @@ sub_update () {
   sudo softwareupdate -i -a
   brew update
   brew upgrade
-  pip_upgrade_outdated
+  pip3 list --outdated
 }
 
 sub_clean () {

@@ -1,5 +1,5 @@
-if ! is-macos -o ! is-executable ruby -o ! is-executable curl -o ! is-executable git; then
-  echo "Skipped: Homebrew (missing: ruby, curl and/or git)"
+if ! is-macos -o ! is-executable curl -o ! is-executable git; then
+  echo "Skipped: Homebrew (missing: curl and/or git)"
   return
 fi
 
@@ -7,6 +7,10 @@ if ! command -v brew 1>/dev/null 2>&1; then
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
+# Ensure brew is in PATH (Apple Silicon installs to /opt/homebrew)
+if [ -f /opt/homebrew/bin/brew ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
 
 brew update
 brew upgrade

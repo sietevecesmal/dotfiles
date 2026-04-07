@@ -3,7 +3,7 @@ COMPUTER_NAME="Kenshin"
 
 # Close any open System Preferences panes, to prevent them from overriding
 # settings we’re about to change
-osascript -e 'tell application "System Preferences" to quit'
+osascript -e 'tell application "System Settings" to quit'
 
 # Ask for the administrator password upfront
 # sudo -v
@@ -36,8 +36,8 @@ sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.serve
 # Menu bar: Show date and 24Hr clock
 defaults write com.apple.menuextra.clock DateFormat -string "EEE MMM d  H:mm a" 
 
-# Menu bar: show battery percentage
-defaults write com.apple.menuextra.battery ShowPercent -string "YES"
+# Menu bar: show battery percentage (handled via Control Center in macOS 13+)
+# defaults write com.apple.menuextra.battery ShowPercent -string "YES"
 
 # Disable opening and closing window animations
 # defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false

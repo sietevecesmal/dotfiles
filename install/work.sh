@@ -13,7 +13,6 @@ work=(
   pluto
   postico
   pyenv
-  sequel-pro
   slack
   tfenv
   arttor/tap/helmify

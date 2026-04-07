@@ -4,7 +4,6 @@ ZSH_THEME="miloshadzic"
 
 plugins=(
   git
-  bundler
   dotenv
   macos
   command-not-found
@@ -21,6 +20,7 @@ export LC_ALL=en_US.UTF-8
 export PATH="/usr/local/sbin:$PATH"
 export PATH="$HOME/.tfenv/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/go/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
 
 # krew
@@ -30,3 +30,8 @@ export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
+
+export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
+
+# thefuck
+eval $(thefuck --alias)
