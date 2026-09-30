@@ -1,10 +1,22 @@
 # Personal packages, installed on top of Brewfile when DOTFILES_PROFILE=personal
 
+brew "qemu"
+brew "scummvm"
+
 if OS.mac?
   cask "ankerwork"
+  cask "balenaetcher"
   cask "calibre"
+  cask "cursor"
   cask "expressvpn"
+  cask "google-chrome"
+  cask "nordpass"
+  cask "notion"
+  cask "notion-calendar"
+  cask "plex"
+  cask "realvnc-connect-viewer"
   cask "steam"
   cask "telegram"
-  cask "vnc-viewer"
+  cask "transmission"
+  cask "zoom"
 end
