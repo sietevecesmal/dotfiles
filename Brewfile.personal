@@ -8,7 +8,6 @@ if OS.mac?
   cask "balenaetcher"
   cask "calibre"
   cask "cursor"
-  cask "expressvpn"
   cask "google-chrome"
   cask "nordpass"
   cask "notion"
