@@ -3,6 +3,7 @@
 # Per-project runtimes (terraform, java, older node...) are managed by mise.
 
 brew "age"
+brew "awscli"
 brew "coreutils"
 brew "gh"
 brew "go"
