@@ -1,0 +1,10 @@
+# Personal packages, installed on top of Brewfile when DOTFILES_PROFILE=personal
+
+if OS.mac?
+  cask "ankerwork"
+  cask "calibre"
+  cask "expressvpn"
+  cask "steam"
+  cask "telegram"
+  cask "vnc-viewer"
+end

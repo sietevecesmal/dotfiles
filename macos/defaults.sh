@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-COMPUTER_NAME="Kenshin"
+# Per-machine name, from DOTFILES_COMPUTER_NAME in ~/.dotfiles.local (skipped if unset)
+COMPUTER_NAME="${DOTFILES_COMPUTER_NAME:-}"
 
 # Close any open System Preferences panes, to prevent them from overriding
 # settings we’re about to change
@@ -16,10 +17,12 @@ osascript -e 'tell application "System Settings" to quit'
 ###############################################################################
 
 # Set computer name (as done via System Preferences → Sharing)
-sudo scutil --set ComputerName "$COMPUTER_NAME"
-sudo scutil --set HostName "$COMPUTER_NAME"
-sudo scutil --set LocalHostName "$COMPUTER_NAME"
-sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "$COMPUTER_NAME"
+if [ -n "$COMPUTER_NAME" ]; then
+  sudo scutil --set ComputerName "$COMPUTER_NAME"
+  sudo scutil --set HostName "$COMPUTER_NAME"
+  sudo scutil --set LocalHostName "$COMPUTER_NAME"
+  sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "$COMPUTER_NAME"
+fi
 
 # Set standby delay to 24 hours (default is 1 hour)
 # sudo pmset -a standbydelay 86400

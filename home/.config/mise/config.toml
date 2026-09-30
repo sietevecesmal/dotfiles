@@ -1,0 +1,4 @@
+# Global tool versions (projects override them with their own mise.toml / .tool-versions)
+[tools]
+terraform = "1.15.2"
+terragrunt = "1.0.4"

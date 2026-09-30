@@ -1,0 +1,26 @@
+# [user] name/email live in the private overlay or ~/.gitconfig.local
+[core]
+	excludesfile = ~/.gitignore_global
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[diff "sopsdiffer"]
+	textconv = sops -d
+[pull]
+	rebase = false
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+[init]
+	defaultBranch = main
+[credential "https://github.com"]
+	helper = 
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !gh auth git-credential
+# Private overlay (~/.dotfiles-private), then per-machine overrides; missing files are ignored
+[include]
+	path = ~/.dotfiles-private/gitconfig
+	path = ~/.gitconfig.local

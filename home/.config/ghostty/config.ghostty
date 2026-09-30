@@ -1,0 +1,40 @@
+# --- Fuente (la misma que en iTerm) ---
+font-family = Monaco
+font-size = 12
+
+# --- Colores: portados de iTerm, siguen el modo claro/oscuro del sistema ---
+theme = light:iterm-light,dark:iterm-dark
+bold-is-bright = true
+
+# --- Ventana ---
+background-opacity = 0.9
+background-blur = true
+window-save-state = always
+window-padding-x = 6
+window-padding-y = 4
+
+# --- Splits: atenuar el panel inactivo (como iTerm/Warp) ---
+unfocused-split-opacity = 0.85
+
+# --- Cursor ---
+cursor-style-blink = false
+
+# --- Teclado: Option queda para macOS (tildes con ⌥e, ⌥n...); alt+←/→ salta palabras y alt+⌫ borra palabra igual ---
+macos-option-as-alt = false
+keybind = alt+left=esc:b
+keybind = alt+right=esc:f
+keybind = alt+backspace=text:\x1b\x7f
+
+# --- Scrollback (~10 MB por panel) ---
+scrollback-limit = 10000000
+
+# --- Mouse / clipboard ---
+copy-on-select = clipboard
+mouse-hide-while-typing = true
+clipboard-write = allow
+
+# --- Integración con la shell (nuevas tabs en el mismo dir, cmd+↑/↓ entre prompts) ---
+shell-integration = zsh
+shell-integration-features = cursor,sudo,title
+keybind = cmd+up=jump_to_prompt:-1
+keybind = cmd+down=jump_to_prompt:1

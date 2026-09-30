@@ -1,55 +1,362 @@
 #!/usr/bin/env bash
+# dotfiles — bootstrap a new machine and keep existing ones in sync.
+# Works with the bash 3.2 that ships with macOS.
+
+set -u
 
 BIN_NAME=$(basename "$0")
-COMMAND_NAME=$1
-SUB_COMMAND_NAME=$2
+DOTFILES_DIR="${DOTFILES_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+DOTFILES_PRIVATE_DIR="${DOTFILES_PRIVATE_DIR:-$HOME/.dotfiles-private}"
+DOTFILES_LOCAL="$HOME/.dotfiles.local"
+PATH="$DOTFILES_DIR/bin:$PATH"
+export DOTFILES_DIR DOTFILES_PRIVATE_DIR
+
+# sync/doctor only install what's missing; upgrades are `dotfiles update`
+export HOMEBREW_BUNDLE_NO_UPGRADE=1
+
+# Per-machine settings (DOTFILES_PROFILE, DOTFILES_COMPUTER_NAME), not committed
+[ -f "$DOTFILES_LOCAL" ] && . "$DOTFILES_LOCAL"
+DOTFILES_PROFILE="${DOTFILES_PROFILE:-}"
+export DOTFILES_PROFILE
 
 sub_help () {
   echo "Usage: $BIN_NAME <command>"
   echo
   echo "Commands:"
-  echo "   clean            Clean up caches (brew, cask)"
-  echo "   dock             Apply macOS Dock settings"
-  echo "   macos            Apply macOS system defaults"
-  echo "   update           Update packages and pkg managers (OS, brew, pip)"
+  echo "   install [profile]  Set up this machine from scratch (profile: work | personal)"
+  echo "   sync               Pull the repos, relink, install missing packages and tools"
+  echo "   link               Symlink everything in home/ into \$HOME (backs up real files)"
+  echo "   packages           Install packages from Brewfile + Brewfile.<profile>"
+  echo "   tools              Install mise tools (~/.config/mise/config.toml)"
+  echo "   doctor             Show drift: missing packages, extra packages, broken links"
+  echo "   profile [name]     Show or set this machine's profile"
+  echo "   update             Update OS, brew packages and mise tools"
+  echo "   clean              Clean up brew caches"
+  echo "   macos              Apply macOS system defaults"
+  echo "   dock               Apply macOS Dock settings"
   echo " - "
-  echo "   help             This help message"
+  echo "   help               This help message"
   echo
 }
 
+info () { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
+warn () { printf '\033[1;33mwarning:\033[0m %s\n' "$*" >&2; }
+tildify () { case "$1" in "$HOME"/*) echo "~${1#$HOME}" ;; *) echo "$1" ;; esac; }
+
+# The public repo, plus the private overlay when it's cloned
+repo_dirs () {
+  echo "$DOTFILES_DIR"
+  [ -d "$DOTFILES_PRIVATE_DIR" ] && echo "$DOTFILES_PRIVATE_DIR"
+}
+
+# Is $1 a path inside one of the repos?
+in_repos () {
+  case "$1" in "$DOTFILES_DIR"/*|"$DOTFILES_PRIVATE_DIR"/*) return 0 ;; esac
+  return 1
+}
+
+# "<rel> <src>" for every file to link into ~; the private overlay wins on the same path
+home_files () {
+  local seen repo rel
+  seen=$(mktemp)
+  for repo in $( [ -d "$DOTFILES_PRIVATE_DIR" ] && echo "$DOTFILES_PRIVATE_DIR"; echo "$DOTFILES_DIR" ); do
+    [ -d "$repo/home" ] || continue
+    (cd "$repo/home" && find . \( -type f -o -type l \) ! -name .DS_Store | sed 's|^\./||' | sort) |
+    while read -r rel; do
+      grep -qxF "$rel" "$seen" && continue
+      echo "$rel" >> "$seen"
+      echo "$rel $repo/home/$rel"
+    done
+  done
+  rm -f "$seen"
+}
+
+# Brewfiles to install: common + profile, from the public repo and the overlay
+brewfiles () {
+  local repo
+  for repo in $(repo_dirs); do
+    [ -f "$repo/Brewfile" ] && echo "$repo/Brewfile"
+    [ -n "$DOTFILES_PROFILE" ] && [ -f "$repo/Brewfile.$DOTFILES_PROFILE" ] && echo "$repo/Brewfile.$DOTFILES_PROFILE"
+  done
+  return 0
+}
+
+# Set KEY=VALUE in ~/.dotfiles.local, replacing any previous value
+set_local () {
+  local tmp
+  tmp=$(mktemp)
+  [ -f "$DOTFILES_LOCAL" ] && grep -v "^export $1=" "$DOTFILES_LOCAL" > "$tmp"
+  echo "export $1=\"$2\"" >> "$tmp"
+  mv "$tmp" "$DOTFILES_LOCAL"
+}
+
+brew_shellenv () {
+  local brew_bin
+  for brew_bin in /opt/homebrew/bin/brew /usr/local/bin/brew /home/linuxbrew/.linuxbrew/bin/brew; do
+    if [ -x "$brew_bin" ]; then
+      eval "$("$brew_bin" shellenv)"
+      return 0
+    fi
+  done
+  return 1
+}
+
+ensure_brew () {
+  brew_shellenv && return 0
+  info "Installing Homebrew"
+  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || return 1
+  brew_shellenv
+}
+
+# Base system packages Homebrew needs on Linux
+linux_base_packages () {
+  if is-executable apt-get; then
+    sudo apt-get update && sudo apt-get install -y build-essential procps curl file git zsh
+  elif is-executable dnf; then
+    sudo dnf group install -y development-tools && sudo dnf install -y procps-ng curl file git zsh
+  elif is-executable pacman; then
+    sudo pacman -S --needed --noconfirm base-devel procps-ng curl file git zsh
+  else
+    warn "Unknown Linux distro: install build tools, curl, git and zsh manually"
+  fi
+}
+
+sub_profile () {
+  if [ $# -eq 0 ]; then
+    echo "${DOTFILES_PROFILE:-(none)}"
+    return
+  fi
+  local repo known=
+  for repo in $(repo_dirs); do
+    [ -f "$repo/Brewfile.$1" ] || [ -f "$repo/zsh/profiles/$1.zsh" ] && known=1
+  done
+  if [ -z "$known" ]; then
+    echo "Unknown profile '$1' (no Brewfile.$1 or zsh/profiles/$1.zsh)" >&2
+    return 1
+  fi
+  set_local DOTFILES_PROFILE "$1"
+  DOTFILES_PROFILE="$1"
+  info "Profile set to $1 (open a new shell to pick it up)"
+}
+
+# If any ancestor of ~/<rel> is a symlink into the repo (older layouts linked
+# whole directories), replace it with a real directory
+unlink_repo_ancestors () {
+  local rel=$1 path="$HOME" part
+  local IFS=/
+  for part in $(dirname "$rel"); do
+    [ "$part" = "." ] && continue
+    path="$path/$part"
+    if [ -L "$path" ]; then
+      in_repos "$(readlink "$path")" && rm "$path" && info "Removed old directory link $(tildify "$path")"
+    fi
+  done
+}
+
+sub_link () {
+  local backup_dir manifest wanted rel src dst stale
+  backup_dir="$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
+  manifest="$HOME/.local/state/dotfiles/links"   # links created by previous runs
+  wanted=$(mktemp)
+  home_files > "$wanted"
+  mkdir -p "$(dirname "$manifest")"
+  touch "$manifest"
+
+  # Drop links into the repos that are no longer wanted or whose target is gone:
+  # the ones we created before, plus top-level ~ and ~/.config (older layouts)
+  { cat "$manifest"
+    find "$HOME" -maxdepth 1 -type l 2>/dev/null
+    [ -d "$HOME/.config" ] && find "$HOME/.config" -maxdepth 4 -type l 2>/dev/null
+  } | sort -u | while read -r stale; do
+    [ -L "$stale" ] && in_repos "$(readlink "$stale")" || continue
+    if [ ! -e "$stale" ] || ! grep -qxF "$(readlink "$stale")" <(cut -d' ' -f2- "$wanted"); then
+      rm "$stale" && info "Removed stale link $(tildify "$stale")"
+    fi
+  done
+
+  : > "$manifest"
+  while read -r rel src; do
+    dst="$HOME/$rel"
+    echo "$dst" >> "$manifest"
+    unlink_repo_ancestors "$rel"
+    mkdir -p "$(dirname "$dst")"
+
+    if [ -L "$dst" ] && [ "$(readlink "$dst")" = "$src" ]; then
+      continue
+    fi
+    if [ -L "$dst" ] && in_repos "$(readlink "$dst")"; then
+      rm "$dst"  # moved between the public repo and the overlay
+    elif [ -e "$dst" ] || [ -L "$dst" ]; then
+      mkdir -p "$(dirname "$backup_dir/$rel")"
+      mv "$dst" "$backup_dir/$rel"
+      warn "Backed up existing ~/$rel to $(tildify "$backup_dir")/$rel"
+    fi
+    ln -s "$src" "$dst"
+    info "Linked ~/$rel"
+  done < "$wanted"
+  rm -f "$wanted"
+}
+
+sub_packages () {
+  ensure_brew || { warn "Homebrew is not available"; return 1; }
+  local brewfile
+  for brewfile in $(brewfiles); do
+    if brew bundle check --file="$brewfile" >/dev/null 2>&1; then
+      info "$(tildify "$brewfile"): everything installed"
+    else
+      info "Installing $(tildify "$brewfile")"
+      brew bundle install --file="$brewfile" || return 1
+    fi
+  done
+}
+
+sub_tools () {
+  if is-executable mise; then
+    info "Installing mise tools"
+    mise install
+  fi
+}
+
+setup_shell () {
+  if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    info "Installing oh-my-zsh"
+    RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended || return 1
+  fi
+
+  # Prefer the system zsh so the login shell survives brew changes
+  local zsh_path
+  for zsh_path in /bin/zsh /usr/bin/zsh "$(command -v zsh)"; do
+    [ -x "$zsh_path" ] && break
+  done
+  [ -x "$zsh_path" ] || { warn "zsh is not installed"; return 1; }
+  if [ "$(basename "${SHELL:-}")" != "zsh" ]; then
+    grep -qx "$zsh_path" /etc/shells || echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
+    info "Changing login shell to $zsh_path"
+    sudo chsh -s "$zsh_path" "$(id -un)"
+  fi
+}
+
+sub_install () {
+  if [ $# -gt 0 ]; then
+    sub_profile "$1" || return 1
+  elif [ -z "$DOTFILES_PROFILE" ]; then
+    warn "No profile set: only common packages will be installed (use '$BIN_NAME install work|personal')"
+  fi
+
+  # Ask for the sudo password upfront and keep it alive until we finish
+  sudo -v
+  while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+
+  if is-macos; then
+    xcode-select -p >/dev/null 2>&1 || { info "Installing Xcode Command Line Tools"; xcode-select --install; }
+  elif is-linux; then
+    linux_base_packages
+  fi
+
+  # Link last: ~/.gitconfig rewrites https://github.com to SSH, and a fresh
+  # machine has no SSH keys yet for Homebrew and oh-my-zsh to clone with
+  sub_packages || { warn "Package install failed; fix it and re-run '$BIN_NAME install'"; return 1; }
+  setup_shell || return 1
+  sub_link || return 1
+  sub_tools || return 1
+
+  if is-macos; then
+    sub_macos
+    sub_dock
+  fi
+
+  info "Done. Open a new terminal to load the new shell config."
+}
+
+sub_sync () {
+  local repo
+  for repo in $(repo_dirs); do
+    info "Pulling $(tildify "$repo")"
+    git -C "$repo" pull --rebase --autostash || return 1
+  done
+  sub_link
+  sub_packages
+  sub_tools
+}
+
+sub_doctor () {
+  local status=0 combined rel src
+
+  if [ -z "$DOTFILES_PROFILE" ]; then
+    warn "No profile set (run '$BIN_NAME profile work|personal')"
+  else
+    info "Profile: $DOTFILES_PROFILE"
+  fi
+  if [ -d "$DOTFILES_PRIVATE_DIR" ]; then
+    info "Private overlay: $(tildify "$DOTFILES_PRIVATE_DIR")"
+  else
+    info "Private overlay: not cloned ($(tildify "$DOTFILES_PRIVATE_DIR"))"
+  fi
+
+  info "Checking links"
+  home_files | while read -r rel src; do
+    [ "$(readlink "$HOME/$rel")" = "$src" ] || echo "  not linked: ~/$rel"
+  done
+
+  if brew_shellenv; then
+    combined=$(mktemp)
+    cat $(brewfiles) > "$combined"
+
+    info "Missing packages (in the Brewfiles, not installed)"
+    brew bundle check --verbose --file="$combined" > "$combined.out" || status=1
+    grep -v "satisfied" "$combined.out" | sed 's/^/  /'
+    rm -f "$combined.out"
+
+    info "Extra packages (installed, not in the Brewfiles)"
+    brew bundle cleanup --file="$combined" | sed -e '/^Would `brew cleanup`/,$d' -e '/^Run `brew bundle cleanup/d' -e 's/^/  /'
+    rm -f "$combined"
+  else
+    warn "Homebrew is not installed"
+    status=1
+  fi
+
+  if is-executable mise; then
+    info "Missing mise tools"
+    mise ls --missing 2>/dev/null | sed 's/^/  /'
+  fi
+
+  return $status
+}
+
 sub_update () {
-  sudo softwareupdate -i -a
-  brew update
-  brew upgrade
-  pip3 list --outdated
+  is-macos && sudo softwareupdate -i -a
+  brew_shellenv && brew update && brew upgrade
+  is-executable mise && mise upgrade
 }
 
 sub_clean () {
-  brew cleanup
+  brew_shellenv && brew cleanup
 }
 
 sub_macos () {
-  for DEFAULTS_FILE in "${DOTFILES_DIR}"/macos/defaults*.sh; do
-    echo "Applying ${DEFAULTS_FILE}" && . "${DEFAULTS_FILE}"
-  done
+  is-macos || { echo "Not macOS" >&2; return 1; }
+  info "Applying macOS defaults"
+  . "$DOTFILES_DIR/macos/defaults.sh"
   echo "Done. Some changes may require a logout/restart to take effect."
 }
 
 sub_dock () {
-  . "${DOTFILES_DIR}/macos/dock.sh" && echo "Dock reloaded."
+  is-macos || { echo "Not macOS" >&2; return 1; }
+  . "$DOTFILES_DIR/macos/dock.sh" && echo "Dock reloaded."
 }
 
+COMMAND_NAME="${1:-}"
 case $COMMAND_NAME in
-  "" | "-h" | "--help")
+  "" | "-h" | "--help" | "help")
     sub_help
     ;;
   *)
     shift
-    sub_${COMMAND_NAME} $@
-    if [ $? = 127 ]; then
-      echo "'$COMMAND_NAME' is not a known command or has errors." >&2
+    if ! declare -f "sub_${COMMAND_NAME}" >/dev/null; then
+      echo "'$COMMAND_NAME' is not a known command." >&2
       sub_help
       exit 1
     fi
+    "sub_${COMMAND_NAME}" "$@"
     ;;
 esac

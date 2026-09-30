@@ -1,54 +1,51 @@
 #!/usr/bin/env bash
+# Set up a new machine (macOS or Linux):
+#
+#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/sietevecesmal/dotfiles/master/bootstrap.sh)" -- work
+#
+# or, with the repo already cloned:  ~/.dotfiles/bootstrap.sh [work|personal]
+#
+# Forked it? Change DOTFILES_REPO below (or export it before running).
+# Private overlay: export DOTFILES_PRIVATE_REPO=<git url> to clone it into
+# ~/.dotfiles-private too (needs access to it, e.g. SSH keys already set up).
 
-# Usage: ./bootstrap.sh [work]
-#   work  - Only install work-related packages (skips personal apps)
+set -e
 
-export DOTFILES_DIR DOTFILES_CACHE DOTFILES_EXTRA_DIR DOTFILES_MODE
-DOTFILES_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-DOTFILES_CACHE="$DOTFILES_DIR/.cache.sh"
-DOTFILES_MODE="${1:-personal}"
+DOTFILES_REPO="${DOTFILES_REPO:-https://github.com/sietevecesmal/dotfiles.git}"
+DOTFILES_PRIVATE_REPO="${DOTFILES_PRIVATE_REPO:-}"
+DOTFILES_DIR="$HOME/.dotfiles"
+DOTFILES_PRIVATE_DIR="$HOME/.dotfiles-private"
 
-# Ask for the sudo password upfront
-sudo -v
-
-# Keep-alive: update existing `sudo` time stamp until bootstrap has finished
-while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
-
-
-# Make utilities available
-
-PATH="$DOTFILES_DIR/bin:$PATH"
-
-# Update dotfiles itself first
-
-if is-executable git -a -d "$DOTFILES_DIR/.git"; then git --work-tree="$DOTFILES_DIR" --git-dir="$DOTFILES_DIR/.git" pull origin "$(git -C "$DOTFILES_DIR" rev-parse --abbrev-ref HEAD)"; fi
-
-# Allocate symlinks
-
-ln -sfv "$DOTFILES_DIR/symlink/.alias" ~
-ln -sfv "$DOTFILES_DIR/symlink/.gitconfig" ~
-ln -sfv "$DOTFILES_DIR/symlink/.gitignore_global" ~
-
-# Install packages
-echo "Installing packages (mode: $DOTFILES_MODE)..."
-
-. "$DOTFILES_DIR/install/brew.sh"
-. "$DOTFILES_DIR/install/cask.sh"
-. "$DOTFILES_DIR/install/pip.sh"
-
-if [ "$DOTFILES_MODE" = "work" ]; then
-  . "$DOTFILES_DIR/install/work.sh"
+# macOS ships a /usr/bin/git stub that only works once the Command Line Tools are installed
+if [[ "$OSTYPE" == darwin* ]] && ! xcode-select -p >/dev/null 2>&1; then
+  echo "Installing Xcode Command Line Tools (needed for git); re-run this script when it finishes."
+  xcode-select --install
+  exit 1
 fi
 
-# Run macos settings
-echo "Updating macOS settings..."
-. "$DOTFILES_DIR/macos/defaults.sh"
-. "$DOTFILES_DIR/macos/defaults-apps.sh"
+if ! command -v git >/dev/null 2>&1; then
+  if command -v apt-get >/dev/null 2>&1; then
+    sudo apt-get update && sudo apt-get install -y git
+  elif command -v dnf >/dev/null 2>&1; then
+    sudo dnf install -y git
+  elif command -v pacman >/dev/null 2>&1; then
+    sudo pacman -S --needed --noconfirm git
+  fi
+fi
 
-# Run dock settings
-echo "Updating Dock settings..."
-. "$DOTFILES_DIR/macos/dock.sh"
+# $1 = repo url, $2 = directory
+clone_or_pull () {
+  if [ -d "$2/.git" ]; then
+    git -C "$2" pull --rebase --autostash
+  else
+    git clone "$1" "$2"
+  fi
+}
 
-# Configure shell
-echo "Configuring shell..."
-. "$DOTFILES_DIR/install/zsh.sh"
+clone_or_pull "$DOTFILES_REPO" "$DOTFILES_DIR"
+if [ -n "$DOTFILES_PRIVATE_REPO" ]; then
+  clone_or_pull "$DOTFILES_PRIVATE_REPO" "$DOTFILES_PRIVATE_DIR" ||
+    echo "Could not clone the private overlay; continuing without it (clone it later and run 'dotfiles sync')."
+fi
+
+exec "$DOTFILES_DIR/bin/dotfiles" install "$@"

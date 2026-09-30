@@ -3,8 +3,6 @@ alias mkdir='mkdir -p'
 alias chown='chown -Rv'
 alias chmod='chmod -Rv'
 
-# thefuck is now initialized via eval in .zshrc
-
 # Terraform
 alias tfplan='terraform plan -out=.tfplan --var-file="env.tfvars"'
 alias tffreshplan='terraform plan -out=.tfplan'
