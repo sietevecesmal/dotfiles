@@ -34,6 +34,7 @@ if OS.mac?
   cask "maccy"
   cask "obsidian"
   cask "rectangle"
+  cask "slack"
   cask "the-unarchiver"
   cask "thebrowsercompany-dia"
   cask "visual-studio-code"
