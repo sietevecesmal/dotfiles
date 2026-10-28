@@ -24,7 +24,6 @@ if OS.mac?
   brew "wifi-password"
 
   cask "1password"
-  cask "arc"
   cask "chatgpt"
   cask "claude"
   cask "claude-code@latest"
@@ -36,6 +35,7 @@ if OS.mac?
   cask "obsidian"
   cask "rectangle"
   cask "the-unarchiver"
+  cask "thebrowsercompany-dia"
   cask "visual-studio-code"
   cask "vlc"
   cask "whatsapp"
