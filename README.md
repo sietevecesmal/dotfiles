@@ -7,7 +7,7 @@ Everything here is generic; anything personal or work-specific lives in a
 ## New machine
 
 ```sh
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/sietevecesmal/dotfiles/master/bootstrap.sh)" -- work
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/sietevecesmal/dotfiles/main/bootstrap.sh)" -- work
 ```
 
 Use `personal` instead of `work` for the personal machine. To also clone the private overlay,

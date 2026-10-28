@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Set up a new machine (macOS or Linux):
 #
-#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/sietevecesmal/dotfiles/master/bootstrap.sh)" -- work
+#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/sietevecesmal/dotfiles/main/bootstrap.sh)" -- work
 #
 # or, with the repo already cloned:  ~/.dotfiles/bootstrap.sh [work|personal]
 #
