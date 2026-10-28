@@ -11,7 +11,6 @@ if OS.mac?
   cask "google-chrome"
   cask "nordpass"
   cask "notion"
-  cask "notion-calendar"
   cask "plex"
   cask "realvnc-connect-viewer"
   cask "steam"
